@@ -1,0 +1,143 @@
+@use "./mixins.scss" as *;
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  scroll-behavior: smooth;
+}
+
+@include reduce-motion {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--f-sans);
+  font-size: 17px;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+// Custom cursor: hide native on fine pointers (cursor component takes over)
+@media (hover: hover) and (pointer: fine) {
+  body {
+    cursor: none;
+  }
+  a,
+  button {
+    cursor: none;
+  }
+}
+
+h1,
+h2 {
+  font-family: var(--f-display);
+  font-weight: 400;
+  line-height: 1.02;
+  letter-spacing: 0.01em;
+}
+
+/* sub-headings stay readable in the body font (bold) */
+h3 {
+  font-family: var(--f-sans);
+  font-weight: 700;
+  line-height: 1.15;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+  color: inherit;
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--nb-black);
+}
+
+.mono {
+  font-family: var(--f-mono);
+  letter-spacing: 0.06em;
+}
+
+.container {
+  width: 100%;
+  max-width: var(--container);
+  margin: 0 auto;
+  padding-left: var(--outer);
+  padding-right: var(--outer);
+}
+
+.section {
+  position: relative;
+  /* top padding only clears the fixed header so navigated sections start near the top;
+     bottom keeps the inter-section rhythm */
+  padding-top: var(--header-h);
+  padding-bottom: var(--section-y);
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font-family: var(--f-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 12px;
+  color: var(--accent-text);
+}
+
+.eyebrow::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 10px var(--accent-soft);
+}
+
+.section-title {
+  font-family: var(--f-display);
+  font-size: clamp(40px, 5.5vw, 68px);
+  letter-spacing: 0.01em;
+  line-height: 0.98;
+  margin: var(--s-4) 0 var(--s-7);
+  @include manga-pop;
+}

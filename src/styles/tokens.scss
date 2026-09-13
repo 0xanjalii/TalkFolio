@@ -1,0 +1,99 @@
+@use "./mixins.scss" as *;
+
+:root {
+  /* ── High-Contrast Electric Green Palette ── */
+  --bg: #f5f5ed;
+  --bg-2: #ffffff;
+  --text: #0a0a0a;
+  --muted: #475569;
+  --faint: #64748b;
+
+  /* Primary Accent Green */
+  --accent: #00f076; /* High-voltage electric green */
+  --accent-ink: #0a0a0a; /* Bold black text on green */
+  --accent-text: #059669; /* Deep emerald for readable text */
+  --accent-soft: #d1fae5; /* Pastel green tint */
+  --accent-2: #10b981; /* Supporting emerald */
+  --accent-glow: rgba(0, 240, 118, 0.45);
+
+  /* Color Tokens */
+  --nb-green: #00f076;
+  --nb-green-dark: #00b354;
+  --nb-green-light: #e6ffed;
+  --nb-yellow: #ffe600;
+  --nb-cyan: #00e5ff;
+  --nb-purple: #a78bfa;
+  --nb-orange: #ff7828;
+  --nb-black: #0a0a0a;
+  --nb-white: #ffffff;
+
+  /* Strokes & Hard Shadows (Zero-Blur) */
+  --nb-border: 2.5px solid #0a0a0a;
+  --nb-border-thick: 3.5px solid #0a0a0a;
+  --nb-shadow-sm: 3px 3px 0 #0a0a0a;
+  --nb-shadow: 5px 5px 0 #0a0a0a;
+  --nb-shadow-lg: 8px 8px 0 #0a0a0a;
+  --nb-shadow-green: 5px 5px 0 #00f076;
+
+  /* Card and Panel Primitives */
+  --glass-bg: #ffffff;
+  --glass-bg-strong: #ffffff;
+  --glass-border: #0a0a0a;
+  --glass-border-soft: rgba(10, 10, 10, 0.2);
+  --glass-edge: #ffffff;
+  --glass-inner: transparent;
+
+  /* Hard offset shadows */
+  --shadow-sm: 3px 3px 0 #0a0a0a;
+  --shadow-md: 5px 5px 0 #0a0a0a;
+  --shadow-lg: 8px 8px 0 #0a0a0a;
+
+  /* Typography */
+  --f-display: "Space Grotesk", system-ui, -apple-system, sans-serif;
+  --f-sans: "Space Grotesk", system-ui, -apple-system, sans-serif;
+  --f-mono: "IBM Plex Mono", "Space Mono", monospace;
+  --f-manga: "Space Grotesk", "Bangers", system-ui, sans-serif;
+
+  /* High-Contrast Ink & Accent Pins */
+  --manga-ink: #0a0a0a;
+  --sticky-1: #00f076;
+  --sticky-2: #ffe600;
+
+  /* Cyber Hologram / HUD */
+  --gold-line: #00f076;
+  --gold-glow: rgba(0, 240, 118, 0.45);
+  --holo-cream: #f8fafc;
+  --holo-cream-dim: #94a3b8;
+  --holo-panel: rgba(10, 10, 10, 0.92);
+
+  /* Spacing */
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 24px;
+  --s-6: 32px;
+  --s-7: 48px;
+  --s-8: 64px;
+
+  /* Radius (sharp or minimal rounding) */
+  --r-sm: 4px;
+  --r-md: 8px;
+  --r-lg: 12px;
+  --r-xl: 16px;
+
+  /* Layout */
+  --container: 1240px;
+  --gap: clamp(20px, 4vw, 40px);
+  --section-y: clamp(80px, 10vw, 150px);
+  --outer: clamp(20px, 5vw, 48px);
+  --header-h: 68px;
+
+  /* Motion */
+  --t-fast: 0.15s;
+  --t-mid: 0.3s;
+  --t-slow: 0.6s;
+  --t-route: 0.4s;
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+}

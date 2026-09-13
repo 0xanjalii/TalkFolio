@@ -1,0 +1,123 @@
+// Mixins/functions ONLY — injected into every component via vite additionalData.
+// Must emit no CSS at the top level (or it would duplicate per-file).
+@use "sass:map";
+
+$breakpoints: (
+  sm: 480px,
+  md: 768px,
+  lg: 1024px,
+  xl: 1280px,
+);
+
+@mixin mq($name) {
+  $value: map.get($breakpoints, $name);
+  @media (min-width: $value) {
+    @content;
+  }
+}
+
+// Card / surface
+@mixin glass($bg: var(--glass-bg)) {
+  background: $bg;
+  border: var(--nb-border);
+  box-shadow: var(--nb-shadow);
+}
+
+@mixin reduce-motion {
+  @media (prefers-reduced-motion: reduce) {
+    @content;
+  }
+}
+
+// Bold pop typography
+@mixin manga-pop($shadow: var(--nb-green)) {
+  text-shadow:
+    3px 3px 0 $shadow,
+    5px 5px 0 var(--nb-black);
+}
+
+// Grid background
+@mixin manga-paper {
+  background-color: var(--bg);
+  background-image:
+    radial-gradient(#0a0a0a 1px, transparent 1px),
+    linear-gradient(to right, rgba(0, 240, 118, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 240, 118, 0.05) 1px, transparent 1px);
+  background-size: 24px 24px, 48px 48px, 48px 48px;
+}
+
+// Hard-edged card
+@mixin manga-card($border: 2.5px, $shadow: 5px) {
+  background: var(--bg-2);
+  border: $border solid var(--nb-black);
+  border-radius: var(--r-md);
+  box-shadow: $shadow $shadow 0 var(--nb-black);
+  transition: transform var(--t-fast) var(--ease), box-shadow var(--t-fast) var(--ease);
+
+  &:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: calc($shadow + 2px) calc($shadow + 2px) 0 var(--nb-black);
+  }
+}
+
+// Sticker badge
+@mixin manga-sticky($bg: var(--nb-green), $rot: -1.5deg) {
+  color: var(--nb-black);
+  background: $bg;
+  border: 2px solid var(--nb-black);
+  box-shadow: 3px 3px 0 var(--nb-black);
+  padding: 4px 12px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  transform: rotate($rot);
+}
+
+// Decorative badge stamp
+@mixin manga-note($rot: 6deg) {
+  position: absolute;
+  z-index: 0;
+  top: calc(var(--header-h) + var(--s-3));
+  right: var(--s-5);
+  display: grid;
+  place-items: center;
+  width: 2.4rem;
+  height: 2.4rem;
+  font-size: 1.2rem;
+  color: var(--nb-black);
+  background: var(--nb-green);
+  border: 2.5px solid var(--nb-black);
+  box-shadow: 3px 3px 0 var(--nb-black);
+  transform: rotate($rot);
+  pointer-events: none;
+}
+
+// Tactile Action Button
+@mixin nb-button($bg: var(--nb-green)) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: $bg;
+  color: var(--nb-black);
+  font-family: var(--f-mono);
+  font-weight: 700;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 10px 20px;
+  border: 2.5px solid var(--nb-black);
+  border-radius: var(--r-sm);
+  box-shadow: 4px 4px 0 var(--nb-black);
+  cursor: pointer;
+  transition: transform var(--t-fast) var(--ease), box-shadow var(--t-fast) var(--ease), background var(--t-fast) var(--ease);
+
+  &:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 var(--nb-black);
+  }
+
+  &:active {
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0 var(--nb-black);
+  }
+}

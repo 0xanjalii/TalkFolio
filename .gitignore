@@ -1,0 +1,98 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+.pnpm-store/
+
+# Build output
+dist/
+.vite/
+.cache/
+*.tsbuildinfo
+
+# Environment variables — NEVER commit (D-ID agent ids / client keys)
+.env*
+!.env.example
+
+# Deployment
+.vercel/
+.turbo/
+
+# Debug logs
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+*.log
+
+# Test artefacts
+playwright-report/
+test-results/
+coverage/
+.coverage
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# AI assistants / local dev tools (project Claude config stays LOCAL)
+.claude/
+.continue/
+.cursor/
+.aider*
+.copilot/
+.remember/
+.factory/
+.kiro/
+.opencode/
+*.claude*
+
+# Root-level markdown — local planning/docs stay out of repo (keep README + CHANGELOG)
+/*.md
+!README.md
+!CHANGELOG.md
+CLAUDE.md
+
+# Project docs + scratch (local reference, not for repo)
+docs/
+misc/
+handoff/
+design/
+
+# Private — personal agent config (prompt, knowledge base, tools). Local-only.
+agent/
+
+# Media binaries (keep heavy audio/video out of git)
+*.mp3
+*.wav
+*.aiff
+*.flac
+*.m4a
+*.mp4
+*.mov
+*.webm
+# …except the hero / About-hologram / Contact clips, which ship with the build (referenced from /public)
+!public/hero.mp4
+!public/skills.mp4
+!public/connect.mp4
+# ...but bundled UI audio is project source — Vite imports these, so keep them tracked
+!src/assets/audio/
+!src/assets/audio/*.mp3
+!src/assets/audio/*.ogg
+
+# OS
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Secrets / credentials
+*.pem
+*.key
+credentials.json
+service-account*.json
+.mcp.json
+
+# Misc
+.tmp/
