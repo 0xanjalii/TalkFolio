@@ -206,7 +206,7 @@ onUnmounted(() => clearInterval(timer));
                 <span>⚡ {{ activeProfile.handle || '@0xanjalii' }}</span>
               </div>
               <div class="avatar-corner-badge mono">
-                <span>{{ (activeProfile.role || 'SPEECH AI ARCHITECT').toUpperCase() }}</span>
+                <span>{{ (activeProfile.role || 'SOFTWARE ENGINEER').toUpperCase() }}</span>
               </div>
             </div>
           </div>

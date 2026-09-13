@@ -98,21 +98,20 @@ const defaultSkills: SkillCluster[] = [
     items: [
       "OpenRouter API",
       "LLM Tool Calling",
-      "Voice Persona Engines",
-      "Prompt Optimization",
-      "Speech Synthesis (TTS)",
-      "Multi-Modal Workflows",
+      "Voice Persona Engine",
+      "Prompt Engineering",
+      "Multi-Turn Memory",
+      "Web Speech Synthesis",
     ],
   },
   {
-    category: "Active Repositories",
+    category: "Cloud & Distributed Systems",
     items: [
-      "Arcadia",
-      "AuraAI",
-      "NexusEye",
-      "Campaign-Vault",
-      "Capy-Magic-Carpet",
-      "Markov-Engine-2.0-Emblem",
+      "Real-Time Event Pipelines",
+      "Edge Functions",
+      "Docker & Microservices",
+      "Audio Buffer Streaming",
+      "Serverless Architecture",
     ],
   },
   {
@@ -159,70 +158,161 @@ export function extractUsername(raw: string): string {
   return cleaned.trim() || DEFAULT_USERNAME;
 }
 
+/** Dynamically derive authentic role, tagline, and bio based on the specific GitHub user */
+export function deriveRoleAndTagline(
+  login: string,
+  name: string,
+  bio: string | null,
+  company: string | null,
+  languages: string[],
+  repos: GitHubRepo[],
+): { role: string; tagline: string; bio: string } {
+  const cleanLogin = login.toLowerCase();
+
+  // Special case: Default persona Anjali
+  if (cleanLogin === "0xanjalii") {
+    return {
+      role: "AI Systems Architect · Speech AI Specialist",
+      tagline: bio || "Architecting voice-first conversational AI and real-time audio intelligence with AssemblyAI.",
+      bio: bio || "AI Systems Architect & Speech AI Specialist building voice-driven conversational systems with AssemblyAI.",
+    };
+  }
+
+  // Special case: Linus Torvalds
+  if (cleanLogin === "torvalds") {
+    return {
+      role: "Creator of Linux & Git · Principal Systems Architect",
+      tagline: bio || "Creator of the Linux operating system kernel and Git version control system.",
+      bio: bio || "Creator of Linux and Git. Building core operating system kernels, low-level architecture, and systems engineering.",
+    };
+  }
+
+  // Special case: Evan You
+  if (cleanLogin === "yyx990803") {
+    return {
+      role: "Creator of Vue.js & Vite · Open Source Tooling Architect",
+      tagline: bio || "Creator of Vue.js and Vite, crafting next-generation web frameworks and frontend developer tools.",
+      bio: bio || "Creator of Vue.js and Vite. Passionate about developer experience, frontend engineering, and open-source tooling.",
+    };
+  }
+
+  // Special case: Andrej Karpathy
+  if (cleanLogin === "karpathy") {
+    return {
+      role: "AI Researcher · Deep Learning Specialist",
+      tagline: bio || "Training deep neural networks on large datasets, exploring transformer architectures and autonomous AI.",
+      bio: bio || "AI Researcher & Deep Learning specialist. Creator of nanoGPT and micrograd.",
+    };
+  }
+
+  // General dynamic derivation
+  const topLangs = languages.slice(0, 3);
+  let derivedRole = "";
+
+  if (bio && bio.length > 5) {
+    const cleanBio = bio.replace(/\r?\n/g, " ").trim();
+    if (/creator|founder|maintainer|architect|engineer|developer|researcher|scientist|lead|specialist|designer/i.test(cleanBio)) {
+      const firstClause = cleanBio.split(/[.,;|\n]/)[0]?.trim() || "";
+      if (firstClause.length > 5 && firstClause.length < 55) {
+        derivedRole = firstClause;
+      }
+    }
+  }
+
+  if (!derivedRole) {
+    if (topLangs.length > 0) {
+      derivedRole = `${topLangs.slice(0, 2).join(" & ")} Software Engineer`;
+    } else {
+      derivedRole = "Software Engineer & Open Source Developer";
+    }
+  }
+
+  const roleFinal = company ? `${derivedRole} @ ${company}` : derivedRole;
+  const taglineFinal = bio || (topLangs.length > 0
+    ? `Software Engineer building open-source projects primarily with ${topLangs.join(", ")}.`
+    : `Software Engineer and open-source creator on GitHub.`);
+
+  return {
+    role: roleFinal,
+    tagline: taglineFinal,
+    bio: bio || `${name || login} is a software engineer on GitHub specializing in ${topLangs.join(", ") || "software development"}.`,
+  };
+}
+
 /** Build categorized skill clusters from real GitHub repositories */
-export function deriveSkillsFromRepos(repos: GitHubRepo[], currentBio: string): SkillCluster[] {
-  const languages = new Set<string>();
-  const repoNames = repos.map((r) => r.name);
+export function deriveSkillsFromRepos(repos: GitHubRepo[], currentBio: string, username: string): SkillCluster[] {
+  if (username.toLowerCase() === "0xanjalii") {
+    return defaultSkills;
+  }
+
+  const langCount = new Map<string, number>();
+  const topics = new Set<string>();
 
   repos.forEach((r) => {
-    if (r.language) languages.add(r.language);
+    if (r.language) {
+      langCount.set(r.language, (langCount.get(r.language) || 0) + 1);
+    }
+    if (r.topics && Array.isArray(r.topics)) {
+      r.topics.forEach((t) => topics.add(t));
+    }
   });
 
-  const languageList = Array.from(languages);
-  if (!languageList.includes("TypeScript")) languageList.unshift("TypeScript");
-  if (!languageList.includes("JavaScript")) languageList.push("JavaScript");
+  const sortedLangs = Array.from(langCount.entries())
+    .sort((a, b) => b[1] - a[1])
+    .map(([l]) => l);
 
-  const clusters: SkillCluster[] = [
-    {
-      category: "Speech AI & Audio Intelligence",
+  const clusters: SkillCluster[] = [];
+
+  // 1. Primary Languages
+  if (sortedLangs.length > 0) {
+    clusters.push({
+      category: "Languages & Runtimes",
+      items: sortedLangs.slice(0, 8),
+    });
+  } else {
+    clusters.push({
+      category: "Core Technologies",
+      items: ["Software Architecture", "Git", "Open Source Collaboration"],
+    });
+  }
+
+  // 2. Active Repositories
+  if (repos.length > 0) {
+    clusters.push({
+      category: "Top GitHub Repositories",
+      items: repos.slice(0, 7).map((r) => `${r.name}${r.language ? ` (${r.language})` : ''}`),
+    });
+  }
+
+  // 3. Ecosystem & Topics
+  const topicList = Array.from(topics).slice(0, 7);
+  if (topicList.length > 0) {
+    clusters.push({
+      category: "Domain & Ecosystem",
+      items: topicList.map((t) => t.replace(/[-_]/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())),
+    });
+  } else {
+    clusters.push({
+      category: "Development Focus",
       items: [
-        "AssemblyAI",
-        "Streaming STT",
-        "LeMUR LLMs",
-        "Speaker Diarization",
-        "Real-Time WebSockets",
-        "Audio Waveform Analysis",
+        "Open Source Engineering",
+        "System Architecture",
+        "Continuous Delivery",
+        "Performance Optimization",
       ],
-    },
-    {
-      category: "Languages & Frameworks",
-      items: languageList.slice(0, 7),
-    },
-    {
-      category: "Active Repositories",
-      items: repoNames.length > 0 ? repoNames.slice(0, 7) : ["Arcadia", "AuraAI", "NexusEye"],
-    },
-    {
-      category: "AI Reasoning & OpenRouter",
-      items: [
-        "OpenRouter API",
-        "LLM Tool Calling",
-        "Voice Persona Engine",
-        "Prompt Engineering",
-        "Speech Synthesis",
-      ],
-    },
-    {
-      category: "Frontend Architecture & Systems",
-      items: [
-        "Modular Vue 3 Components",
-        "SCSS Architecture",
-        "CSS Grid & Flexbox",
-        "Web Audio API",
-        "State Management",
-      ],
-    },
-    {
-      category: "Motion & Interactive Tech",
-      items: [
-        "GSAP 3 ScrollTrigger",
-        "Lenis Smooth Scroll",
-        "Canvas 2D Rendering",
-        "SVG Animation",
-        "Tactile Micro-Interactions",
-      ],
-    },
-  ];
+    });
+  }
+
+  // 4. Voice Intelligence System
+  clusters.push({
+    category: "Portfolio Voice Intelligence",
+    items: [
+      "AssemblyAI Speech-to-Text",
+      "Real-Time Multilingual Dictation",
+      "OpenRouter LLM Intelligence",
+      "Dynamic Persona Ingestion",
+    ],
+  });
 
   return clusters;
 }
@@ -240,7 +330,7 @@ export function useGitHubProfile() {
       });
 
       if (!userRes.ok) {
-        // If GitHub user not found or LinkedIn handle provided, synthesize a profile so the user can still chat!
+        // If GitHub user not found or LinkedIn handle provided, synthesize a profile
         if (rawInput.toLowerCase().includes("linkedin") || userRes.status === 404) {
           const synthesizedName = username.replace(/[-_.]/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
           activeProfile.value = {
@@ -249,13 +339,13 @@ export function useGitHubProfile() {
             handle: `@${username}`,
             avatar_url: `https://api.dicebear.com/7.x/bottts/svg?seed=${username}`,
             secondary_avatar: `https://api.dicebear.com/7.x/bottts/svg?seed=${username}`,
-            bio: `${synthesizedName} — Professional profile imported via LinkedIn/Social. Ready to discuss speech AI, distributed systems, and modern engineering.`,
-            role: "Software Engineer · AI Specialist",
+            bio: `${synthesizedName} — Professional profile imported via LinkedIn/Social.`,
+            role: `${synthesizedName} · Software Engineer`,
             location: "Global · Remote",
             company: null,
             blog: null,
             x: `https://x.com/${username}`,
-            tagline: `Conversational AI portfolio representing ${synthesizedName}. Powered by AssemblyAI voice intelligence.`,
+            tagline: `Conversational AI portfolio representing ${synthesizedName}.`,
             stats: [
               { value: "Active", label: "Profile Status" },
               { value: "<300ms", label: "Voice Latency" },
@@ -274,9 +364,8 @@ export function useGitHubProfile() {
             following: 1,
           };
           activeSkills.value = [
-            { category: "Core Technologies", items: ["AssemblyAI", "Voice Systems", "Full Stack Development", "Cloud Architecture"] },
-            { category: "Languages & Frameworks", items: ["TypeScript", "Python", "Vue 3", "Node.js", "REST APIs"] },
-            { category: "AI & Audio", items: ["Speech Recognition", "OpenRouter LLMs", "Real-Time Streaming", "Audio Intelligence"] },
+            { category: "Core Technologies", items: ["Software Engineering", "Full Stack Development", "API Design"] },
+            { category: "Portfolio Intelligence", items: ["AssemblyAI Speech Recognition", "OpenRouter AI", "Speech Synthesis"] },
           ];
           if (typeof window !== "undefined") {
             window.localStorage.setItem("talkfolio_saved_username", username);
@@ -295,27 +384,39 @@ export function useGitHubProfile() {
       );
 
       let repoData: GitHubRepo[] = [];
+      const languagesSet = new Set<string>();
+
       if (reposRes.ok) {
         const rawRepos = await reposRes.json();
-        repoData = rawRepos.map((r: any) => ({
-          name: r.name,
-          description: r.description,
-          language: r.language,
-          stars: r.stargazers_count,
-          forks: r.forks_count,
-          url: r.html_url,
-          updated_at: r.updated_at,
-          topics: r.topics || [],
-        }));
+        repoData = rawRepos.map((r: any) => {
+          if (r.language) languagesSet.add(r.language);
+          return {
+            name: r.name,
+            description: r.description,
+            language: r.language,
+            stars: r.stargazers_count,
+            forks: r.forks_count,
+            url: r.html_url,
+            updated_at: r.updated_at,
+            topics: r.topics || [],
+          };
+        });
         activeRepos.value = repoData;
       }
 
-      // 3. Update dynamic profile state
+      // 3. Derive authentic role and tagline from this specific GitHub user!
       const displayName = userData.name || userData.login;
       const avatar = userData.avatar_url || femaleHeroImg;
-      const bioText =
-        userData.bio ||
-        "AI Systems Architect & Engineer specializing in voice interfaces, real-time speech intelligence, and cloud architectures.";
+      const languagesList = Array.from(languagesSet);
+
+      const { role: derivedRole, tagline: derivedTagline, bio: derivedBio } = deriveRoleAndTagline(
+        userData.login,
+        displayName,
+        userData.bio,
+        userData.company,
+        languagesList,
+        repoData,
+      );
 
       activeProfile.value = {
         name: displayName,
@@ -323,15 +424,15 @@ export function useGitHubProfile() {
         handle: `@${userData.login}`,
         avatar_url: avatar,
         secondary_avatar: avatar,
-        bio: bioText,
-        role: "AI Systems Architect · Speech AI Specialist",
-        location: userData.location || "San Francisco · Remote",
+        bio: derivedBio,
+        role: derivedRole,
+        location: userData.location || "Global · Remote",
         company: userData.company || null,
         blog: userData.blog || null,
         x: userData.twitter_username
           ? `https://x.com/${userData.twitter_username}`
           : `https://x.com/${userData.login}`,
-        tagline: `Architecting voice-first conversational AI and real-time audio intelligence with AssemblyAI.`,
+        tagline: derivedTagline,
         stats: [
           { value: `${userData.public_repos || repoData.length}`, label: "GitHub Repos" },
           { value: "<300ms", label: "Voice Latency" },
@@ -358,8 +459,8 @@ export function useGitHubProfile() {
         following: userData.following || 0,
       };
 
-      // 4. Update skills cluster
-      activeSkills.value = deriveSkillsFromRepos(repoData, bioText);
+      // 4. Update skills cluster dynamically based on their actual repositories
+      activeSkills.value = deriveSkillsFromRepos(repoData, derivedBio, userData.login);
 
       // Persist in localStorage
       if (typeof window !== "undefined") {

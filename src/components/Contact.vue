@@ -31,7 +31,7 @@ const { isListening, toggleListening, transcriptText } = useAssemblyAI();
               <div class="portrait-badge mono">{{ activeProfile.name.toUpperCase() }} // READY TO BUILD</div>
             </div>
             <div class="quick-status mono">
-              <span class="live-dot"></span> Available for Speech AI Architecture &amp; Collaboration
+              <span class="live-dot"></span> Open for Engineering &amp; Project Collaboration
             </div>
           </div>
 

@@ -1,16 +1,33 @@
 <script setup lang="ts">
+import { computed } from "vue";
 import { useGitHubProfile } from "@/composables/useGitHubProfile";
 import femaleConnectImg from "@/content/images/female-connect.jpg";
 
-const { activeProfile } = useGitHubProfile();
+const { activeProfile, activeRepos, activeSkills } = useGitHubProfile();
 
-const focus = [
-  "AssemblyAI Streaming Speech-to-Text",
-  "LeMUR Audio Intelligence & LLMs",
-  "Real-Time Conversational Voice Interfaces",
-  "Speaker Diarization & Auto-Chapters",
-  "Low-Latency Audio Streaming Architectures",
-];
+const focus = computed(() => {
+  if (activeProfile.value.login.toLowerCase() === "0xanjalii") {
+    return [
+      "AssemblyAI Streaming Speech-to-Text",
+      "Real-Time Conversational Voice Interfaces",
+      "Speaker Diarization & Audio Intelligence",
+      "Low-Latency Audio Streaming Architectures",
+      "Full Stack AI Systems Architecture",
+    ];
+  }
+
+  const items: string[] = [];
+  if (activeRepos.value.length > 0) {
+    activeRepos.value.slice(0, 3).forEach((r) => {
+      items.push(`${r.name} (${r.language || 'Code'})${r.description ? ` · ${r.description.slice(0, 42)}...` : ''}`);
+    });
+  }
+  if (activeSkills.value.length > 0) {
+    items.push(`Core: ${activeSkills.value[0]?.items.slice(0, 4).join(", ")}`);
+  }
+  items.push("Interactive TalkFolio Voice AI Persona");
+  return items;
+});
 </script>
 
 <template>
@@ -36,12 +53,12 @@ const focus = [
       <!-- bio (lower-left) -->
       <div class="panel panel-bio">
         <span class="panel-badge mono">MISSION</span>
-        <p>{{ activeProfile.bio || 'Architecting voice-first intelligent interfaces and streaming audio pipelines with AssemblyAI.' }}</p>
+        <p>{{ activeProfile.bio || activeProfile.tagline }}</p>
       </div>
 
       <!-- skills summary (right) -->
       <div class="panel panel-skills">
-        <span class="panel-badge mono">SPEECH AI EXPERTISE</span>
+        <span class="panel-badge mono">CORE FOCUS &amp; REPOSITORIES</span>
         <ul class="focus">
           <li v-for="f in focus" :key="f" class="mono">
             <span class="green-bullet">⚡</span> {{ f }}
